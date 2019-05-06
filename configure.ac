@@ -515,18 +515,29 @@ Install the development package for python-$am_cv_python_version, or configure
 
    dnl PyGTK
    dnl disable pygtk when we're on Python 3
-   AS_IF([test "x$with_gtk$PYTHON_VERSION_MAJOR" = "xyes2"],
-     [PKG_CHECK_MODULES([PYGTK], [pygtk-2.0], [with_pygtk2=yes], [with_pygtk2=no])
-      AC_CHECK_PROGS([PYGTK_CODEGEN], [pygobject-codegen-2.0 pygtk-codegen-2.0 pygtk-codegen], [:])
+   AS_IF([test "x$with_gtk"],
+     [AS_IF([test "x$PYTHON_VERSION_MAJOR" = "x2"],
+       [PKG_CHECK_MODULES([PYGTK], [pygtk-2.0], [with_pygtk2=yes], [with_pygtk2=no])
+        AC_CHECK_PROGS([PYGTK_CODEGEN], [pygobject-codegen-2.0 pygtk-codegen-2.0 pygtk-codegen], [:])
 
-      AS_IF([test "x$PYGTK_H2DEF" = "x"],
-        [PYGTK_H2DEF=`$PKG_CONFIG pygtk-2.0 --variable=codegendir`/h2def.py
-         AS_IF([test -f "$PYGTK_H2DEF"], [], [PYGTK_H2DEF=":"])])
-      AS_IF([test "x$PYGTK_DEFS" = "x"],
-        [PYGTK_DEFS=`$PKG_CONFIG pygtk-2.0 --variable=defsdir`])
+        AS_IF([test "x$PYGTK_H2DEF" = "x"],
+          [PYGTK_H2DEF=`$PKG_CONFIG pygtk-2.0 --variable=codegendir`/h2def.py
+           AS_IF([test -f "$PYGTK_H2DEF"], [], [PYGTK_H2DEF=":"])])
+        AS_IF([test "x$PYGTK_DEFS" = "x"],
+          [PYGTK_DEFS=`$PKG_CONFIG pygtk-2.0 --variable=defsdir`])
+     ])
+
+     m4_ifdef([GOBJECT_INTROSPECTION_CHECK],
+       [GOBJECT_INTROSPECTION_CHECK([0.10])
+        AS_IF([test "x$found_introspection" = "xyes"],
+          [INTROSPECTION_TYPELIBDIR=`$PKG_CONFIG --variable=typelibdir --define-variable="libdir=${libdir}" gobject-introspection-1.0`
+           INTROSPECTION_GIRDIR=`$PKG_CONFIG --variable=girdir --define-variable="datadir=${datadir}" gobject-introspection-1.0`
+           AC_SUBST(INTROSPECTION_TYPELIBDIR)
+           AC_SUBST(INTROSPECTION_GIRDIR)])])
    ])
 ])
 
+AM_CONDITIONAL([HAVE_INTROSPECTION], [test "x$found_introspection" = "xyes"])
 AM_CONDITIONAL([HAVE_PYTHON], [test "x$with_python" = "xyes"])
 AM_CONDITIONAL([HAVE_PYGTK2], [test "x$with_pygtk2" = "xyes"])
 
@@ -759,7 +770,10 @@ AS_IF([test "x$have_GM" = "xyes"],
 AS_IF([test "x$with_gtk" != "xyes"],
   [echo "        => the GTK+ widget will *NOT* be built"],
   [AS_IF([test "x$with_pygtk2" != "xyes"],
-     [echo "        => the Python GTK widget wrapper will *NOT* be built"])])
+     [echo "        => the Python 2 GTK widget wrapper will *NOT* be built"])
+   AS_IF([test "x$found_introspection" != "xyes"],
+     [echo "        => the GNOME GObject introspection will *NOT* be built"])])
+
 AS_IF([test "x$with_qt" != "xyes"],
   [echo "        => the Qt widget will *NOT* be built"])
 AS_IF([test "x$with_qt" == "xyes" && test "x$enable_static_qt" == "xyes" ],
