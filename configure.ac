@@ -468,12 +468,12 @@ AC_ARG_WITH([gtk],
 AC_ARG_VAR([GLIB_GENMARSHAL], [full path to glib-genmarshal])
 
 AS_IF([test "x$with_gtk" != "xno"],
-  [PKG_CHECK_MODULES([GTK], [gtk+-2.0 gthread-2.0])
+  [PKG_CHECK_MODULES([GTK], [gtk+-3.0])
    GLIB_GENMARSHAL=`$PKG_CONFIG glib-2.0 --variable=glib_genmarshal`
-   GTK_VERSION=`$PKG_CONFIG gtk+-2.0 --modversion`
+   GTK_VERSION=`$PKG_CONFIG gtk+-3.0 --modversion`
    AC_MSG_NOTICE([using GTK+ version $GTK_VERSION])
-   GTHREAD_VERSION=`$PKG_CONFIG gthread-2.0 --modversion`
-   AC_MSG_NOTICE([using gthread-2.0 version $GTHREAD_VERSION])])
+#   GTHREAD_VERSION=`$PKG_CONFIG gthread-2.0 --modversion`
+#   AC_MSG_NOTICE([using gthread-3.0 version $GTHREAD_VERSION])])
 
 AM_CONDITIONAL([HAVE_GTK], [test "x$with_gtk" = "xyes"])
 
