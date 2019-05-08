@@ -14,10 +14,7 @@ cache:
   - $HOME/pbuilder-bases
 matrix:
   include:
-  - env: TARGET_OS=xenial
   - env: TARGET_OS=debian-sid
-  - compiler: clang
-    env: TARGET_OS=debian-sid
 before_install:
 - "${TRAVIS_BUILD_DIR}/travis/${TRAVIS_OS_NAME}.${TARGET_OS}.before_install"
 install:

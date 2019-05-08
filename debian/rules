@@ -32,7 +32,7 @@ ifeq (,$(findstring linux,$(DEB_HOST_ARCH_OS)))
   CONFIGURE += --disable-video
 endif
 
-PYVERS = $(shell pyversions -rv)
+PYVERS = $(shell pyversions3 -rv)
 
 export CLASSPATH := .:/usr/share/java/junit4.jar
 export JAVA_HOME := $(shell ls -d /usr/lib/jvm/java-*-openjdk*|head -1)
@@ -140,7 +140,7 @@ ifneq (,$(filter zbar-dbg,$(PACKAGES)))
 	dh_install --sourcedir=debian/tmp_pydbg -pzbar-dbg
 endif
 	dh_installman
-	dh_python2
+	dh_python3
 	dh_perl
 	dh_strip_nondeterminism
 	dh_compress
